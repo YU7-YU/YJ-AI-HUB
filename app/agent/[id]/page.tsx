@@ -10,6 +10,7 @@ import {
   Plus,
   Settings2,
   Coins,
+  Check,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,6 +29,7 @@ import { Footer } from '@/components/layout/footer'
 import { AgentCard } from '@/components/agent-card'
 import { allAgents } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
+import { useMyAgents } from '@/lib/hooks/use-my-agents'
 
 const models = [
   { id: 'claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'Anthropic' },
@@ -51,6 +53,8 @@ export default function AgentDetailPage({
   const [output, setOutput] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [tokenCount, setTokenCount] = useState({ input: 0, output: 0 })
+
+  const { isSaved, toggle } = useMyAgents(agent.id)
 
   const similarAgents = allAgents
     .filter((a) => a.category === agent.category && a.id !== agent.id)
@@ -176,9 +180,24 @@ export default function AgentDetailPage({
 
                 {/* [Prep-02] 修复 #1: 按钮高度 36px */}
                 {/* [Prep-02] 修复 #2: 按钮交互态 */}
-                <Button className="mt-5 h-9 w-full gap-2 focus-ring">
-                  <Plus className="h-4 w-4" />
-                  添加到我的 Agent
+                <Button
+                  className={cn(
+                    'mt-5 h-9 w-full gap-2 focus-ring',
+                    isSaved && 'bg-success text-success-foreground'
+                  )}
+                  onClick={toggle}
+                >
+                  {isSaved ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      已添加到我的 Agent ✓
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4" />
+                      添加到我的 Agent
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
